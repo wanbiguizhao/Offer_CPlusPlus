@@ -1,18 +1,6 @@
-#include "BalanceBinaryTree.h"
-class AVLTree{
-private:
-	const int LH=1;
-	const int EH=0;
-	const int RH=-1;
-void LeftBalance(BSTree &pRoot);
-void RightBalance(BSTree &pRoot);
-public:
-	void R_Rotate(BSTree &pRoot);
-	void L_Rotate(BSTree &pRoot);
-	int InsertAVL(BSTree &pRoot,int key,bool &taller);
-	//void L_RRotate(BSTree &pRoot);
-	//void R_LRotate(BSTree &pRoot);
-}; 
+#include <iostream>
+#include <string>
+#include "BalancedBinaryTree.h"
 //左子树，左子树，右旋
 void AVLTree::R_Rotate(BSTree &pRoot)
 {
@@ -26,13 +14,16 @@ void AVLTree::L_Rotate(BSTree &pRoot)
 	BSTree rc=pRoot->pRChild;
 	pRoot->pRChild=rc->pLChild;
 	rc->pLChild=pRoot;
+	pRoot=rc;
 }
-int InsertAVL(BSTree &pRoot,int key,bool &taller)
+int AVLTree::InsertAVL(BSTree &pRoot,int key,bool &taller)
 {
 	if(!pRoot)
 	{
 		pRoot=new BSTNode();
 		pRoot->mData=key;
+		std::cout<<"key="<<key<<endl;
+		pRoot->bf=EH;
 		pRoot->pLChild=pRoot->pRChild=NULL;
 		taller=true;
 		return 1;
@@ -50,7 +41,7 @@ int InsertAVL(BSTree &pRoot,int key,bool &taller)
 			{
 				switch(pRoot->bf)
 				{
-					case LF: LeftBalance(pRoot);taller=false; break;
+					case LH: LeftBalance(pRoot);taller=false; break;
 					case EH: pRoot->bf=LH; taller=true; break;
 					case RH: pRoot->bf=EH; taller=false ;break;
 				}
@@ -63,9 +54,9 @@ int InsertAVL(BSTree &pRoot,int key,bool &taller)
 			{
 				switch(pRoot->bf)
 				{
-					case LF: pRoot->bf=EH;taller=false; break;
+					case LH: pRoot->bf=EH;taller=false; break;
 					case EH: pRoot->bf=RH;taller=true;break;
-					case RF: RightBalance(pRoot);taller=false;break;
+					case RH: RightBalance(pRoot);taller=false;break;
 				}
 			}
 		}
@@ -85,9 +76,38 @@ void AVLTree::LeftBalance(BSTree &pRoot)
 		BSTree rd=lc->pRChild;
 		switch(rd->bf)
 		{
-			case LH:
-			case EH:
-			case RH:	
+			case LH:pRoot->bf=RH;lc->bf=EH;break; 
+			case EH:pRoot->bf=EH;lc->bf=EH;break;
+			case RH:pRoot->bf=EH;lc->bf=LH;break;
 		}
+		rd->bf=EH;
+		L_Rotate(pRoot->pLChild);
+		R_Rotate(pRoot);
+		break;
+	}
+}
+void AVLTree::RightBalance(BSTree &pRoot)
+{
+	BSTree rd=pRoot->pRChild;
+	switch(rd->bf)
+	{
+		case RH:
+		pRoot->bf=EH;rd->bf=EH;		
+		L_Rotate(pRoot);
+		break;
+		case LH:
+		BSTree lc=rd->pLChild;
+		switch(lc->bf)
+		{
+			case LH:
+				pRoot->bf=EH;rd->bf=RH;break;
+			case EH:
+				pRoot->bf=EH;rd->bf=EH;break;
+			case RH:
+				pRoot->bf=LH;rd->bf=EH;break;
+		}
+		lc->bf=EH;
+		R_Rotate(pRoot->pRChild);
+		L_Rotate(pRoot);
 	}
 }
