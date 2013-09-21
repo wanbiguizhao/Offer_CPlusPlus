@@ -43,8 +43,6 @@ int InsertAVL(BSTree &pRoot,int key,bool &taller)
 		{
 			taller=false;return 0;
 		}
-
-
 		if(pRoot->mData>key)
 		{
 			if(InsertAVL(pRoot->pLChild,key,taller)==0) return 0;
@@ -67,10 +65,29 @@ int InsertAVL(BSTree &pRoot,int key,bool &taller)
 				{
 					case LF: pRoot->bf=EH;taller=false; break;
 					case EH: pRoot->bf=RH;taller=true;break;
-					case RF: 
+					case RF: RightBalance(pRoot);taller=false;break;
 				}
 			}
 		}
 		return 1;
+	}
+}
+void AVLTree::LeftBalance(BSTree &pRoot)
+{
+	BSTree lc=pRoot->pLChild;
+	switch(lc->bf)
+	{
+		case LH:
+		pRoot->bf=lc->bf=EH;
+		R_Rotate(pRoot);
+		break;
+		case RH:
+		BSTree rd=lc->pRChild;
+		switch(rd->bf)
+		{
+			case LH:
+			case EH:
+			case RH:	
+		}
 	}
 }
