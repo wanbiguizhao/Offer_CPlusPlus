@@ -1,6 +1,4 @@
-#include <string>
-#include <iostream>
-using namespace std;
+
 class StringHelper
 {
 public:
@@ -15,3 +13,5 @@ public:
 	void LeftRotate(string &str,int n,int m,int head,int tail);
 	void RightRotate(string &str,int n,int m,int head,int end);	
 };
+int KMPMatch(char * p,char *s);
+void GetNext(char *s,int *next ,int length);
